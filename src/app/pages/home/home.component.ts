@@ -1,27 +1,55 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import { Product } from "src/app/models/product.model";
 import { CartService } from "src/app/services/cart.service";
+import { StoreService } from "src/app/services/store.service";
 
-const ROWS_HEIGHT: { [id: number]: number } = { 1: 400, 3: 335, 4: 350 };
+const ROWS_HEIGHT: { [id: number]: number } = { 1: 260, 3: 335, 4: 350 };
 
 @Component({
   selector: "app-home",
   templateUrl: `home.component.html`,
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   cols = 3;
   rowHeight = ROWS_HEIGHT[this.cols];
   category: string | undefined;
+  products?: Product[];
+  sort = "desc";
+  limit = 12;
+  productsSub?: Subscription;
 
-  constructor(private cartService: CartService) {}
+  constructor(
+    private cartService: CartService,
+    private readonly _storeService: StoreService
+  ) {}
+
+  ngOnInit(): void {
+    this.getProducts();
+  }
+
+  ngOnDestroy(): void {
+    this.productsSub?.unsubscribe();
+  }
 
   onColumnsCountChange(value: number): void {
     this.cols = value;
     this.rowHeight = ROWS_HEIGHT[this.cols];
   }
 
+  onSortChange(value: string): void {
+    this.sort = value;
+    this.getProducts();
+  }
+
+  onItemsCountChange(value: number): void {
+    this.limit = value;
+    this.getProducts();
+  }
+
   onShowCategoryChange(value: string): void {
     this.category = value;
+    this.getProducts();
   }
 
   onAddToCart(product: Product): void {
@@ -34,31 +62,11 @@ export class HomeComponent {
     });
   }
 
-  //TODO: remove
-  products = [
-    {
-      id: 1,
-      title: "Sneakers",
-      price: 200,
-      category: "Shoes",
-      description: "Nice",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 2,
-      title: "T-shirt",
-      price: 100,
-      category: "Shirts",
-      description: "Nice",
-      image: "https://via.placeholder.com/150",
-    },
-    {
-      id: 3,
-      title: "Hoodie",
-      price: 250,
-      category: "Shirts",
-      description: "Nice",
-      image: "https://via.placeholder.com/150",
-    }
-  ]
+  getProducts(): void {
+    this.productsSub = this._storeService
+      .getAllProducts(this.limit, this.sort, this.category)
+      .subscribe((val) => {
+        this.products = val;
+      });
+  }
 }
