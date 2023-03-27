@@ -7,11 +7,11 @@ import { Product } from "src/app/models/product.model";
 })
 export class ProductBoxComponent {
   @Input() fullWidthMode = false;
-  product: Product | undefined = {
+  @Input() product: Product | undefined = {
     id: 1,
-    title: "Sneakers",
+    title: "xxx",
     price: 200,
-    category: "Shoes",
+    category: "xxx",
     description: "Nice",
     image: "https://via.placeholder.com/150",
   };

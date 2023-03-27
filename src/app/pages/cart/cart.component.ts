@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Cart, CartItem } from "src/app/models/cart.model";
+import { CartService } from "src/app/services/cart.service";
 
 @Component({
   selector: "app-cart",
@@ -7,47 +8,44 @@ import { Cart, CartItem } from "src/app/models/cart.model";
   styles: [],
 })
 export class CartComponent implements OnInit {
-  cart: Cart = {
-    items: [
-      {
-        product: "https://via.placeholder.com/150",
-        name: "Sneakers",
-        price: 150,
-        quantity: 1,
-        id: 1,
-      },
-      {
-        product: "https://via.placeholder.com/150",
-        name: "Sneakers",
-        price: 150,
-        quantity: 2,
-        id: 1,
-      },
-      {
-        product: "https://via.placeholder.com/150",
-        name: "Sneakers",
-        price: 200,
-        quantity: 3,
-        id: 1,
-      },
-    ],
-  };
+  cart: Cart = { items: [] };
 
   dataSource: CartItem[] = [];
   displayedColumns: string[] = [
     "product",
-    'name',
-    'price',
-    'quantity',
-    'total',
-    'action'
+    "name",
+    "price",
+    "quantity",
+    "total",
+    "action",
   ];
 
+  constructor(private readonly _cartService: CartService) {}
+
   ngOnInit(): void {
-    this.dataSource = this.cart.items;
+    this._cartService.cart.subscribe((_cart) => {
+      this.cart = _cart;
+      this.dataSource = this.cart.items;
+    });
   }
 
   getTotal(items: CartItem[]): number {
-    return items.reduce((p, c) => p + c.price * c.quantity, 0);
+    return this._cartService.getTotal(items);
+  }
+
+  onClearCart() {
+    this._cartService.clearCart();
+  }
+
+  onRemoveFromCart(item: CartItem): void {
+    this._cartService.removeItem(item);
+  }
+
+  onAddQuantity(item: CartItem): void {
+    this._cartService.addToCart(item);
+  }
+
+  onLowerQuantity(item: CartItem): void {
+    this._cartService.lowerQuantity(item);
   }
 }

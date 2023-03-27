@@ -33,4 +33,32 @@ export class HomeComponent {
       id: product.id,
     });
   }
+
+  //TODO: remove
+  products = [
+    {
+      id: 1,
+      title: "Sneakers",
+      price: 200,
+      category: "Shoes",
+      description: "Nice",
+      image: "https://via.placeholder.com/150",
+    },
+    {
+      id: 2,
+      title: "T-shirt",
+      price: 100,
+      category: "Shirts",
+      description: "Nice",
+      image: "https://via.placeholder.com/150",
+    },
+    {
+      id: 3,
+      title: "Hoodie",
+      price: 250,
+      category: "Shirts",
+      description: "Nice",
+      image: "https://via.placeholder.com/150",
+    }
+  ]
 }

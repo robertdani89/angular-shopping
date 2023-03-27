@@ -21,7 +21,33 @@ export class CartService {
     }
 
     this.cart.next({ items });
-    this._snackBar.open(`1 item added to cart`, "Ok", { duration: 3000 });
-    console.log(this.cart.value);
+    this._snackBar.open(`1 item added to cart.`, "Ok", { duration: 2000 });
+  }
+
+  getTotal(items: CartItem[]): number {
+    return items.reduce((p, c) => p + c.price * c.quantity, 0);
+  }
+
+  clearCart(): void {
+    this.cart.next({ items: [] });
+    this._snackBar.open("Cart is empty.", "Ok", { duration: 2000 });
+  }
+
+  removeItem(item: CartItem): void {
+    const filtered = this.cart.value.items.filter((x) => x.id !== item.id);
+    this.cart.next({ items: filtered });
+    this._snackBar.open("Removed item from cart.", "Ok", { duration: 2000 });
+  }
+
+  lowerQuantity(item: CartItem): void {
+    const _item = this.cart.value.items.find((x) => x.id === item.id);
+    if (!_item) return;
+    _item.quantity--;
+
+    if (_item.quantity === 0) {
+      this.removeItem(item);
+    } else {
+      this._snackBar.open("Removed item from cart.", "Ok", { duration: 2000 });
+    }
   }
 }
